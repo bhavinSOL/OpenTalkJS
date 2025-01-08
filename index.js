@@ -17,22 +17,24 @@
 // runChat();
 
 import ollama from "ollama";
-import fs from "fs";
+import fs from "fs/promises";
 
-let q= fs.readFileSync("./q.txt", "utf-8");
-console.log(q)
-
-askQuestion()
 async function askQuestion() {
   try {
+    // Read the question from the file
+    let q = await fs.readFile("q.txt", "utf-8");
+    console.log(q);
+
     const response = await ollama.chat({
       model: "qwen2:0.5b",
-      messages: [{ role: 'user', content: q }]
+      messages: [{ role: "user", content: q }]
     });
+    const a=response.message.content;
 
-    fs.writeFileSync("./a.txt", response.message.content);
-
+    await fs.writeFile("a.txt", a);
+    console.log("Response written to a.txt");
   } catch (error) {
     console.error("Error occurred:", error.message);
   }
 }
+askQuestion();
