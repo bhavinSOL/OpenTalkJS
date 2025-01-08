@@ -1,81 +1,41 @@
-// const { Ollama } = require("ollama");
-
-// async function runChat() {
-//   try {
-//     const ollama = new Ollama();
-//     const response = await ollama.chat({
-//       model: "qwen2:0.5b",
-//       messages: [{ role: "user", content: "Write a bug report" }]
-//     });
-
-//     console.log("Chatbot Response:", response.message.content);
-//   } catch (error) {
-//     console.error("Error occurred:", error.message);
-//   }
-// }
-
-// runChat();
-
-// import ollama from "ollama";
-// import fs from "fs/promises";
-
-// async function askQuestion() {
-//   try {
-//     // Read the question from the file
-//     let q = await fs.readFile("q.txt", "utf-8");
-//     console.log(q);
-
-//     const response = await ollama.chat({
-//       model: "qwen2:0.5b",
-//       messages: [{ role: "user", content: q }]
-//     });
-//     const a=response.message.content;
-
-//     await fs.writeFile("a.txt", a);
-//     console.log("Response written to a.txt");
-//   } catch (error) {
-//     console.error("Error occurred:", error.message);
-//   }
-// }
-// askQuestion();
-
 
 //**************************** */
-// assignment 15
+// assignment 16
 //****************************** */
-
-
-
 import ollama from "ollama";
 import fs from "fs";
-import path from "path";
+let subDir = process.argv;
+getQuestion(subDir)
 
 
-const inputFolder = "./input";
-const outputFolder = "./output";
+async function getQuestion(subDir) {
+  try{
+      let q=Math.floor(Math.random() * 3) + 1
+      let p=`./input/${subDir[2]}/q${q}.txt`
+      let out=`./output2/${subDir[2]}/q${q}.txt`
+      try{
+        let question=fs.readFileSync(p, "utf-8");
+        console.log(question)
 
-
-const files = fs.readdirSync(inputFolder).filter(file => path.extname(file) === ".txt");
-
-askQuestions();
-
-async function askQuestions() {
-  for (const file of files) {
-    try {
- 
-      const question = fs.readFileSync(path.join(inputFolder, file), "utf-8");
-
-      const response = await ollama.chat({
-        model: "qwen2:0.5b",
-        messages: [{ role: "user", content: question }]
-      });
-
-      const outputFile = path.join(outputFolder, file);
-      fs.writeFileSync(outputFile, response.message.content);
-
-      console.log(`Answer saved to ${outputFile}`);
-    } catch (error) {
-      console.error(`Error processing ${file}:`, error.message);
-    }
+        try {
+          const response = await ollama.chat({
+            model: "qwen2:0.5b",
+            messages: [{ role: "user", content: question }]
+          });
+          const a=response.message.content;
+      
+          await fs.writeFileSync(out, a);
+          console.log(`Response written to: ${out}.txt `);
+        } catch (error) {
+          console.error("Error :", error.message);
+        }
+      }
+      catch (error) {
+            console.error("Error occurred:", error.message);
+      }
+  }
+  catch (error) {
+        console.error("Error occurred at:", error.message);
   }
 }
+
